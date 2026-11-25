@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin :: head(${form.maDungChung != null ? 'Sửa vị thuốc' : 'Thêm vị thuốc'})}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('vithuoc')}"></aside>
+
+    <main class="main">
+        <div class="admin-topbar-row">
+            <div class="breadcrumb">
+                <a th:href="@{/admin}" style="color:var(--muted);text-decoration:none;">Quản trị</a>
+                <span class="sep">›</span>
+                <a th:href="@{/admin/vi-thuoc}" style="color:var(--muted);text-decoration:none;">Vị thuốc</a>
+                <span class="sep">›</span>
+                <span th:text="${form.maDungChung != null ? 'Chỉnh sửa' : 'Thêm mới'}">Chỉnh sửa</span>
+            </div>
+            <div class="right-actions">
+                <div class="admin-user"><div class="avatar">QT</div><span style="font-size:.82rem;">Quản trị viên</span></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div th:replace="~{fragments/admin :: flash}"></div>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
+                <a th:href="@{/admin/vi-thuoc}" style="color:var(--muted);text-decoration:none;font-size:1.1rem;">←</a>
+                <h1 class="page-title serif"
+                    th:text="${form.maDungChung != null ? 'Chỉnh sửa vị thuốc' : 'Thêm vị thuốc mới'}">Chỉnh sửa</h1>
+            </div>
+
+            <div class="form-panel" style="max-width:720px;">
+                <form th:action="@{/admin/vi-thuoc}" th:object="${form}" method="post">
+                    <input type="hidden" th:field="*{maDungChung}">
+
+                    <div class="form-grid-2">
+                        <div class="field required">
+                            <label for="tenViThuoc">Tên vị thuốc</label>
+                            <input type="text" id="tenViThuoc" th:field="*{tenViThuoc}" required placeholder="VD: Bạch truật">
+                        </div>
+                        <div class="field">
+                            <label for="maDuocLieu">Mã dược liệu</label>
+                            <input type="text" id="maDuocLieu" th:field="*{maDuocLieu}" placeholder="VD: 05V.302">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="tenKhoaHocDuocLieu">Tên khoa học của dược liệu</label>
+                        <input type="text" id="tenKhoaHocDuocLieu" th:field="*{tenKhoaHocDuocLieu}" placeholder="VD: Atractylodes macrocephala">
+                    </div>
+
+                    <div class="field">
+                        <label for="tenKhoaHocNguon">Nguồn gốc (tên khoa học loài)</label>
+                        <input type="text" id="tenKhoaHocNguon" th:field="*{tenKhoaHocNguon}" placeholder="VD: Atractylodes macrocephala Koidz.">
+                    </div>
+
+                    <div class="field">
+                        <label>Nguồn gốc dược liệu</label>
+                        <div style="display:flex;gap:20px;margin-top:4px;">
+                            <label class="check"><input type="checkbox" th:field="*{nguonGocNam}" value="N"> Nam dược</label>
+                            <label class="check"><input type="checkbox" th:field="*{nguonGocBac}" value="B"> Bắc dược</label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">💾 Lưu vị thuốc</button>
+                        <a th:href="@{/admin/vi-thuoc}" class="btn btn-ghost">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

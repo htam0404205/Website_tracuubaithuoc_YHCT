@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public :: head(${bt.tenBaiThuoc()})}"></head>
+<body>
+<header th:replace="~{fragments/public :: header('home')}"></header>
+
+<main>
+    <!-- Breadcrumb -->
+    <div class="crumb-bar">
+        <div class="container breadcrumb">
+            <a th:href="@{/}">Tra cứu bài thuốc</a>
+            <span class="sep">/</span>
+            <span th:text="${bt.tenBaiThuoc()}"></span>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="detail-hero">
+        <div class="container detail-hero-grid">
+            <div>
+                <span class="tag" th:text="${bt.loai()}">Bài thuốc cổ phương</span>
+                <span class="tag" style="margin-left:6px; background:var(--soft); color:var(--green);"
+                      th:text="'Hội đồng minh họa'" th:if="false">minh họa</span>
+                <h1 th:text="${bt.tenBaiThuoc()}">Tên bài thuốc</h1>
+                <p class="lead"
+                   th:text="'Bài vị thuốc, từng một bài phương cổ truyền. Tra cứu thành phần, phân loại và thông tin nguồn tại cùng một nơi.'"></p>
+                <p class="meta-line">
+                    Mã hiệu: <strong th:text="${bt.maBaiThuoc()}"></strong> ·
+                    <a href="#thanh-phan" th:text="${#numbers.formatInteger(#lists.size(bt.thanhPhan()), 2)} + ' vị thuốc thành phần'"></a>
+                </p>
+            </div>
+            <div class="hero-visual small" aria-hidden="true"></div>
+        </div>
+    </section>
+
+    <div class="container detail-grid">
+        <!-- Sidebar mục lục -->
+        <aside class="side">
+            <p class="side-title">TRONG BÀI THUỐC NÀY</p>
+            <a href="#tong-quan" class="side-link"><span class="num">01</span> Tổng quan</a>
+            <a href="#thanh-phan" class="side-link"><span class="num">02</span> Thành phần bài thuốc</a>
+            <a href="#nguon" class="side-link"><span class="num">03</span> Nguồn tham khảo</a>
+            <div class="side-note">
+                <strong>Không tự ý dùng thuốc</strong>
+                <p>Thông tin dành cho học tập và nghiên cứu. Hãy tham khảo bác sĩ YHCT trước khi sử dụng.</p>
+            </div>
+        </aside>
+
+        <!-- Nội dung -->
+        <div>
+            <!-- 01 Tổng quan -->
+            <section id="tong-quan" class="d-section">
+                <h2 class="serif"><span class="num">01</span> Tổng quan bài thuốc</h2>
+                <div class="info-grid">
+                    <div>
+                        <small>BỆNH DANH YHCT</small>
+                        <strong th:text="${bt.tenBenhDanh()}"></strong>
+                        <span class="muted" th:text="${bt.maBenhDanh()}"></span>
+                    </div>
+                    <div>
+                        <small>THỂ LÂM SÀNG</small>
+                        <strong th:text="${bt.tenTheLamSang()}"></strong>
+                        <span class="muted" th:text="${bt.maTheLamSang()}"></span>
+                    </div>
+                </div>
+                <p class="info-note" th:if="${bt.loai() != 'Bài thuốc'}">
+                    Phân loại này là ký tự tra cứu, cần đối chiếu với tài liệu chuyên ngành.
+                </p>
+            </section>
+
+            <!-- 02 Thành phần -->
+            <section id="thanh-phan" class="d-section">
+                <h2 class="serif">
+                    <span class="num">02</span> Thành phần bài thuốc
+                    <span class="count" th:text="${#lists.size(bt.thanhPhan())} + ' vị thuốc'"></span>
+                </h2>
+                <table class="ing-table">
+                    <thead>
+                        <tr><th>STT</th><th>Vị thuốc</th><th>Thông tin tra cứu</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="t : ${bt.thanhPhan()}">
+                            <td th:text="${#numbers.formatInteger(t.viTri(), 2)}">01</td>
+                            <td><strong th:text="${t.tenGoc()}"></strong></td>
+                            <td class="muted" th:text="${t.thongTin()}"></td>
+                            <td class="right">
+                                <a th:if="${t.viThuocId() != null}"
+                                   th:href="@{/vi-thuoc/{id}(id=${t.viThuocId()})}">Xem vị thuốc ↗</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(bt.thanhPhan())}">
+                            <td colspan="4" class="muted">Bài thuốc này chưa có thành phần được ghi nhận.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="note-box">
+                    ⓘ Tên thành phần được giữ đúng như văn bản gốc. Thành phần chưa khớp danh mục không có liên kết.
+                    Trang này không hiển thị liều dùng, không dùng để tự điều trị.
+                </p>
+            </section>
+
+            <!-- 03 Nguồn tham khảo -->
+            <section id="nguon" class="d-section">
+                <h2 class="serif"><span class="num">03</span> Nguồn tham khảo</h2>
+                <div class="source-card">
+                    <div th:if="${bt.coNguon()}">
+                        <strong th:text="${bt.nguonSoHieu()}"></strong>
+                        <p th:text="${bt.nguonTen()}"></p>
+                        <p class="muted">
+                            <span th:if="${bt.nguonCoQuan() != null}" th:text="${bt.nguonCoQuan()}"></span>
+                            <span th:if="${bt.nguonNgay() != null}"   th:text="' · Ban hành ' + ${bt.nguonNgay()}"></span>
+                            <span th:if="${bt.nguonTrang() != null}"  th:text="' · Trang ' + ${bt.nguonTrang()}"></span>
+                        </p>
+                        <p><a th:if="${bt.nguonUrl() != null}" th:href="${bt.nguonUrl()}" target="_blank" rel="noopener">Xem văn bản gốc ↗</a></p>
+                    </div>
+                    <div th:unless="${bt.coNguon()}">
+                        <strong>Bản ghi do quản trị viên nhập</strong>
+                        <p class="muted">Bài thuốc này chưa gắn văn bản nguồn. Hãy đối chiếu với tài liệu gốc.</p>
+                    </div>
+                    <p class="muted small" th:if="${bt.ghiChuBanGhi() != null and !#strings.isEmpty(bt.ghiChuBanGhi())}"
+                       th:text="${bt.ghiChuBanGhi()}"></p>
+                    <a class="more" th:href="@{/nguon-du-lieu}" style="display:inline-block;margin-top:12px;">Xem nguồn dữ liệu →</a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Tiếp tục tra cứu -->
+    <section class="continue" th:if="${!#lists.isEmpty(bt.lienQuan())}">
+        <div class="container continue-grid">
+            <div>
+                <p class="eyebrow">TIẾP TỤC TRA CỨU</p>
+                <h2 class="serif">Có thể bạn muốn tìm hiểu</h2>
+                <p class="muted">Khám phá thêm các bài cổ phương cùng thể lâm sàng.</p>
+                <a class="more" th:href="@{/}" style="display:inline-block;margin-top:10px;">Xem tất cả bài thuốc →</a>
+            </div>
+            <div class="cards">
+                <article class="card-b" th:each="r : ${bt.lienQuan()}">
+                    <div class="card-top">
+                        <span th:text="${#numbers.formatInteger(r.soViThuoc(), 2)} + ' vị thuốc'"></span>
+                        <span class="tag" th:text="${r.loai()}"></span>
+                    </div>
+                    <h3 class="serif"><a th:href="@{/bai-thuoc/{id}(id=${r.id()})}" th:text="${r.tenBaiThuoc()}"></a></h3>
+                    <p class="preview" th:text="${r.xemTruoc()}"></p>
+                    <a class="more" th:href="@{/bai-thuoc/{id}(id=${r.id()})}">Xem chi tiết ↗</a>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+</html>

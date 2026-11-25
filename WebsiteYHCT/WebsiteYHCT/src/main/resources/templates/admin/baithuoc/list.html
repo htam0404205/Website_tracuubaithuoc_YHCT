@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin :: head('Quản lý bài thuốc')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('baithuoc')}"></aside>
+
+    <main class="main">
+        <div class="admin-topbar-row">
+            <div class="breadcrumb">
+                <a th:href="@{/admin}" style="color:var(--muted);text-decoration:none;">Quản trị</a>
+                <span class="sep">›</span>
+                <span>Bài thuốc</span>
+            </div>
+            <div class="right-actions">
+                <a th:href="@{/}" target="_blank" style="font-size:.82rem;color:var(--muted);text-decoration:none;">↗ Website tra cứu</a>
+                <div class="admin-user"><div class="avatar">QT</div><span style="font-size:.82rem;">Quản trị viên</span></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div th:replace="~{fragments/admin :: flash}"></div>
+
+            <div class="topbar">
+                <div>
+                    <h1 class="page-title serif">Quản lý bài thuốc</h1>
+                    <p class="page-subtitle">Quản lý thông tin, phân loại và thành phần của từng bài thuốc.</p>
+                </div>
+                <a th:href="@{/admin/bai-thuoc/new}" class="btn btn-primary">+ Thêm bài thuốc</a>
+            </div>
+
+            <div class="notice notice-info" style="margin-bottom:16px;">
+                ⓘ Tên bài thuốc có thể trùng nhau. Luôn phân biệt và quản lý bằng mã bài thuốc duy nhất.
+            </div>
+
+            <!-- Tất cả bài thuốc panel -->
+            <div class="panel">
+                <div class="table-panel-head">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <h3>Tất cả bài thuốc</h3>
+                        <span class="table-count" th:text="${#numbers.formatInteger(page.totalElements,1,'POINT')}">516</span>
+                    </div>
+                    <span style="font-size:.76rem;color:var(--muted);">Bản ghi minh họa</span>
+                </div>
+
+                <!-- Toolbar lọc -->
+                <form class="toolbar" th:action="@{/admin/bai-thuoc}" method="get" style="padding:12px 14px;border-bottom:1px solid var(--line);">
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên hoặc mã bài thuốc" aria-label="Từ khóa">
+                    <select name="maBenhDanh">
+                        <option value="">Tất cả bệnh danh</option>
+                        <option th:each="b : ${dsBenhDanh}" th:value="${b.maBenhDanh}" th:text="${b.tenBenhDanh}"
+                                th:selected="${b.maBenhDanh == paramBenhDanh}"></option>
+                    </select>
+                    <select name="maTheLamSang">
+                        <option value="">Tất cả thể lâm sàng</option>
+                        <option th:each="t : ${dsTheLamSang}" th:value="${t.maTheLamSang}" th:text="${t.tenTheLamSang}"
+                                th:selected="${t.maTheLamSang == paramTheLamSang}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-ghost">Tìm</button>
+                    <a th:href="@{/admin/bai-thuoc}" class="btn btn-ghost">Đặt lại</a>
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:36px;"><input type="checkbox" disabled></th>
+                            <th>MÃ BÀI</th>
+                            <th>TÊN BÀI THUỐC</th>
+                            <th>BỆNH DANH</th>
+                            <th>THỂ LÂM SÀNG</th>
+                            <th>THÀNH PHẦN</th>
+                            <th>NGUỒN</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="bt : ${page.content}">
+                            <td><input type="checkbox"></td>
+                            <td class="muted" style="font-size:.8rem;" th:text="${bt.maBaiThuoc}">BT-001</td>
+                            <td><strong th:text="${bt.tenBaiThuoc}">Đối pháp lập phương</strong></td>
+                            <td class="muted" th:text="${bt.theLamSang != null and bt.theLamSang.benhDanh != null ? bt.theLamSang.benhDanh.tenBenhDanh : '—'}">Cảm mạo</td>
+                            <td class="muted" th:text="${bt.theLamSang != null ? bt.theLamSang.tenTheLamSang : '—'}">Phong hàn</td>
+                            <td class="muted">—</td>
+                            <td class="muted" style="font-size:.8rem;" th:text="${bt.vanBan != null ? bt.vanBan.tenVanBan : '—'}">Văn bản mẫu</td>
+                            <td>
+                                <div class="cell-actions">
+                                    <a class="icon-btn" th:href="@{/admin/bai-thuoc/{id}/edit(id=${bt.maBaiThuocDungChung})}" title="Chỉnh sửa">✏</a>
+                                    <form th:action="@{/admin/bai-thuoc/{id}/delete(id=${bt.maBaiThuocDungChung})}" method="post" style="margin:0;"
+                                          onsubmit="return confirm('Xóa bài thuốc này?');">
+                                        <button type="submit" class="icon-btn danger" title="Xóa">🗑</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${page.totalElements == 0}">
+                            <td colspan="8" class="muted" style="text-align:center;padding:28px;">Không có bài thuốc nào phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="table-footer" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span th:text="'Hiển thị ' + (${page.number * page.size + 1}) + '–' + ${page.number * page.size + page.numberOfElements} + ' trong ' + ${#numbers.formatInteger(page.totalElements,1,'POINT')} + ' bài thuốc'">Hiển thị 1–7</span>
+
+                    <nav aria-label="Phân trang" th:if="${page.totalPages > 1}">
+                        <ul class="pager" style="margin:0;">
+                            <li th:if="${page.hasPrevious()}">
+                                <a th:href="@{/admin/bai-thuoc(keyword=${keyword},page=${page.number-1})}">‹</a>
+                            </li>
+                            <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                                th:classappend="${i == page.number} ? 'active'"
+                                th:if="${i <= 2 or i >= page.totalPages - 1 or (i >= page.number - 1 and i <= page.number + 1)}">
+                                <a th:text="${i + 1}" th:href="@{/admin/bai-thuoc(keyword=${keyword},page=${i})}"></a>
+                            </li>
+                            <li th:if="${page.hasNext()}">
+                                <a th:href="@{/admin/bai-thuoc(keyword=${keyword},page=${page.number+1})}">›</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <p style="font-size:.74rem;color:var(--muted);">Nội dung các bản ghi và mã định danh trên màn hình là dữ liệu minh họa thiết kế.</p>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/admin :: head('Đối chiếu thành phần')}"></head>
+
+<body>
+    <div class="app-shell">
+        <aside th:replace="~{fragments/admin :: sidebar('lienket')}"></aside>
+
+        <main class="main">
+            <div class="admin-topbar-row">
+                <div class="breadcrumb">
+                    <a th:href="@{/admin}" style="color:var(--muted);text-decoration:none;">Quản trị</a>
+                    <span class="sep">›</span>
+                    <span>Thành phần bài thuốc</span>
+                </div>
+                <div class="right-actions">
+                    <div class="admin-user">
+                        <div class="avatar">QT</div><span style="font-size:.82rem;">Quản trị viên</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div th:replace="~{fragments/admin :: flash}"></div>
+
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title serif">Đối chiếu thành phần</h1>
+                        <p class="page-subtitle">Kiểm tra tên gốc và quản lý liên kết giữa thành phần bài thuốc với danh
+                            mục vị thuốc.</p>
+                    </div>
+                </div>
+
+                <div class="notice notice-warn" style="margin-bottom:16px;">
+                    <strong>⚠ Không tự động gán mã khi chưa có căn cứ phù hợp</strong><br>
+                    Với thành phần chưa khớp, luôn giữ nguyên tên gốc và trạng thái "Chưa tìm thấy".
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;">
+                    <!-- Bảng thành phần -->
+                    <div class="panel">
+                        <div class="table-panel-head">
+                            <div style="display:flex;gap:12px;align-items:center;">
+                                <span style="font-size:.88rem;font-weight:600;"
+                                    th:text="'Tất cả ' + ${#numbers.formatInteger(page.totalElements,1,'POINT')}">Tất cả
+                                    2.564</span>
+                                <a th:href="@{/admin/lien-ket(filter='not-found')}"
+                                    style="font-size:.82rem;color:var(--muted);text-decoration:underline;">Chưa tìm
+                                    thấy</a>
+                                <a th:href="@{/admin/lien-ket(filter='matched')}"
+                                    style="font-size:.82rem;color:var(--muted);text-decoration:underline;">Đã khớp</a>
+                            </div>
+                        </div>
+
+                        <form class="toolbar" th:action="@{/admin/lien-ket}" method="get"
+                            style="padding:12px 14px;border-bottom:1px solid var(--line);">
+                            <input type="text" name="keyword" th:value="${keyword}"
+                                placeholder="Tìm tên thành phần hoặc mã bài thuốc">
+                            <select name="baiThuocId">
+                                <option value="">Tất cả bài thuốc</option>
+                            </select>
+                            <button type="submit" class="btn btn-ghost" style="padding:8px 14px;">Tìm</button>
+                        </form>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>TÊN THÀNH PHẦN GỐC</th>
+                                    <th>BÀI THUỐC</th>
+                                    <th>VỊ THUỐC LIÊN KẾT</th>
+                                    <th>TRẠNG THÁI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tp : ${page.content}" th:data-id="${tp.id}" th:data-tengoc="${tp.tenGoc}"
+                                    th:data-vitri="${tp.viTri}" th:data-baithuoc="${tp.baiThuoc.maBaiThuoc}"
+                                    th:data-vithuoc="${tp.viThuoc != null ? tp.viThuoc.tenViThuoc : ''}"
+                                    th:data-trangthai="${tp.viThuoc != null ? 'Đã khớp' : 'Chưa tìm thấy'}"
+                                    onclick="selectRow(this)" style="cursor:pointer;">
+                                    <td>
+                                        <strong th:text="${tp.tenGoc}">Chích thảo</strong>
+                                        <div class="muted" style="font-size:.76rem;" th:text="'Vị trí ' + ${tp.viTri}">
+                                            Vị trí 4</div>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/bai-thuoc/{id}/edit(id=${tp.baiThuoc.maBaiThuocDungChung})}"
+                                            th:text="${tp.baiThuoc.maBaiThuoc}"
+                                            style="font-size:.82rem;color:var(--green2);">BT-001</a>
+                                    </td>
+                                    <td class="muted" th:text="${tp.viThuoc != null ? tp.viThuoc.tenViThuoc : '—'}">—
+                                    </td>
+                                    <td>
+                                        <span class="badge"
+                                            th:classappend="${tp.viThuoc != null ? 'badge-ok' : 'badge-warn'}"
+                                            th:text="${tp.viThuoc != null ? '✓ Đã khớp' : 'Chưa tìm thấy'}">Chưa tìm
+                                            thấy</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${page.totalElements == 0}">
+                                    <td colspan="4" class="muted" style="text-align:center;padding:28px;">Tất cả thành
+                                        phần đã được liên kết.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="table-footer"
+                            style="display:flex;justify-content:space-between;align-items:center;">
+                            <span
+                                th:text="'Hiển thị 1–' + ${page.numberOfElements} + ' trong ' + ${#numbers.formatInteger(page.totalElements,1,'POINT')} + ' thành phần'">1
+                                / 428</span>
+                            <nav th:if="${page.totalPages > 1}">
+                                <ul class="pager" style="margin:0;">
+                                    <li th:if="${page.hasPrevious()}">
+                                        <a th:href="@{/admin/lien-ket(keyword=${keyword},page=${page.number-1})}">‹</a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                                        th:classappend="${i == page.number} ? 'active'"
+                                        th:if="${i == 0 or i == page.totalPages - 1 or (i >= page.number - 1 and i <= page.number + 1)}">
+                                        <a th:text="${i + 1}"
+                                            th:href="@{/admin/lien-ket(keyword=${keyword},page=${i})}"></a>
+                                    </li>
+                                    <li th:if="${page.hasNext()}">
+                                        <a th:href="@{/admin/lien-ket(keyword=${keyword},page=${page.number+1})}">›</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Panel Chi tiết đối chiếu -->
+                    <div class="form-panel" id="detail-panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                            <h3 style="margin:0;font-size:.95rem;">Chi tiết đối chiếu</h3>
+                            <span class="badge badge-warn" id="detail-status">Chưa tìm thấy</span>
+                        </div>
+
+                        <div style="margin-bottom:14px;">
+                            <p
+                                style="font-size:.68rem;color:var(--muted);margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em;">
+                                TÊN THÀNH PHẦN GỐC</p>
+                            <p style="font-size:1.3rem;font-family:var(--serif);font-weight:600;margin:0;"
+                                id="detail-tenGoc">Chọn một thành phần</p>
+                            <p class="muted" style="font-size:.8rem;margin:4px 0 0;" id="detail-info"></p>
+                        </div>
+
+                        <div style="background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:14px;"
+                            id="detail-nguon" style="display:none;">
+                            <div
+                                style="display:flex;gap:8px;align-items:flex-start;font-size:.8rem;color:var(--muted);">
+                                <span>📄</span>
+                                <div id="detail-nguon-text">—</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:12px;">
+                            <p style="font-size:.8rem;color:var(--muted);margin:0 0 8px;">Vị thuốc liên kết</p>
+                            <form th:action="@{/admin/lien-ket/{id}(id=0)}" method="post" id="gan-form">
+                                <input type="hidden" name="page" th:value="${page.number}">
+                                <input type="text" name="tenViThuoc" list="ds-vithuoc"
+                                    placeholder="Tìm theo tên hoặc mã vị thuốc"
+                                    style="width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:.88rem;font-family:var(--sans);margin-bottom:8px;">
+                                <datalist id="ds-vithuoc">
+                                    <option th:each="v : ${viThuocList}" th:value="${v.tenViThuoc}"></option>
+                                </datalist>
+                                <div style="display:flex;gap:8px;">
+                                    <button type="submit" class="btn btn-ghost btn-block" style="font-size:.84rem;"
+                                        disabled>Chọn vị thuốc để xác nhận liên kết</button>
+                                </div>
+                            </form>
+                        </div>
+                        <button type="button" class="btn btn-ghost btn-block"
+                            style="font-size:.82rem;color:var(--muted);">Giữ trạng thái chưa đối chiếu</button>
+                    </div>
+                </div>
+                <p style="font-size:.74rem;color:var(--muted);margin-top:8px;">Các bản ghi trên màn hình là dữ liệu minh
+                    họa · Mã vị thuốc để trống cho đến khi được xác nhận.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function selectRow(el) {
+            document.querySelectorAll('tbody tr').forEach(r => r.style.backgroundColor = '');
+            el.style.backgroundColor = '#f1f6f2';
+            const id = el.getAttribute('data-id');
+            const tenGoc = el.getAttribute('data-tengoc');
+            const baiThuoc = el.getAttribute('data-baithuoc');
+            const viThuoc = el.getAttribute('data-vithuoc');
+            const status = el.getAttribute('data-trangthai');
+            const viTri = el.getAttribute('data-vitri');
+
+            document.getElementById('detail-tenGoc').textContent = tenGoc;
+            document.getElementById('detail-info').textContent = baiThuoc + ' • Vị trí ' + viTri;
+            const badge = document.getElementById('detail-status');
+            badge.textContent = status;
+            badge.className = 'badge ' + (status.includes('Đã khớp') ? 'badge-ok' : 'badge-warn');
+
+            const form = document.getElementById('gan-form');
+            form.action = '/admin/lien-ket/' + id;
+            const input = form.querySelector('input[name="tenViThuoc"]');
+            input.value = viThuoc;
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = false;
+            btn.className = 'btn btn-primary btn-block';
+            btn.textContent = 'Xác nhận liên kết';
+        }
+    </script>
+</body>
+
+</html>

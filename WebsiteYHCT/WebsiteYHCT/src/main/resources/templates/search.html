@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/public :: head('Kết quả tìm kiếm')}"></head>
+
+<body>
+    <header th:replace="~{fragments/public :: header(${type})}"></header>
+
+    <div class="search-hero">
+        <div class="container">
+            <h1 class="serif" th:text="${type == 'vithuoc'} ? 'Tra cứu vị thuốc' : 'Tra cứu bài thuốc'">Tra cứu</h1>
+            <form class="search-box" th:action="@{/search}" method="get" role="search" style="max-width:640px;">
+                <select name="type" aria-label="Loại tra cứu"
+                    style="border:0;padding:8px 10px;background:transparent;font-family:var(--sans);color:var(--muted);font-size:.88rem;">
+                    <option value="baithuoc" th:selected="${type == 'baithuoc'}">Bài thuốc</option>
+                    <option value="vithuoc" th:selected="${type == 'vithuoc'}">Vị thuốc</option>
+                </select>
+                <input type="text" name="q" th:value="${q}" placeholder="Nhập từ khóa..." aria-label="Từ khóa tìm kiếm">
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            </form>
+        </div>
+    </div>
+
+    <main class="container page">
+        <div class="search-tabs">
+            <a th:href="@{/search(type='baithuoc',q=${q})}" th:classappend="${type == 'baithuoc'} ? 'active'">Bài
+                thuốc</a>
+            <a th:href="@{/search(type='vithuoc',q=${q})}" th:classappend="${type == 'vithuoc'}  ? 'active'">Vị
+                thuốc</a>
+        </div>
+
+        <p class="result-count">
+            <strong th:text="${page.totalElements}">0</strong> kết quả
+            <span th:if="${q != null and !#strings.isEmpty(q)}">cho "<strong th:text="${q}"></strong>"</span>
+        </p>
+
+        <!-- Bài thuốc -->
+        <div th:if="${type == 'baithuoc'}">
+            <article class="result" th:each="bt : ${page.content}">
+                <h3><a th:href="@{/bai-thuoc/{id}(id=${bt.id()})}" th:text="${bt.tenBaiThuoc()}">Tên bài thuốc</a></h3>
+                <p class="meta">
+                    <span class="badge" th:text="${bt.benhDanh()}"></span>
+                    <span class="muted" th:text="${bt.theLamSang()}"></span>
+                </p>
+                <p class="snippet" th:if="${bt.maBaiThuoc() != null}" th:text="'Mã bài thuốc: ' + ${bt.maBaiThuoc()}">
+                </p>
+            </article>
+        </div>
+
+        <!-- Vị thuốc -->
+        <div th:if="${type == 'vithuoc'}">
+            <article class="result" th:each="vt : ${page.content}">
+                <h3><a th:href="@{/vi-thuoc/{id}(id=${vt.id()})}" th:text="${vt.tenViThuoc()}">Tên vị thuốc</a></h3>
+                <p class="meta">
+                    <em th:if="${vt.tenKhoaHoc() != null}" th:text="${vt.tenKhoaHoc()}" class="muted"></em>
+                    <span class="badge" th:if="${vt.nguonGoc() != null and !#strings.isEmpty(vt.nguonGoc())}"
+                        th:text="${vt.nguonGoc()}"></span>
+                </p>
+                <p class="snippet" th:if="${vt.maDuocLieu() != null}" th:text="'Mã dược liệu: ' + ${vt.maDuocLieu()}">
+                </p>
+            </article>
+        </div>
+
+        <div class="empty" th:if="${page.totalElements == 0}">
+            Không tìm thấy kết quả phù hợp.
+            <span th:if="${type == 'baithuoc'}">Thử tìm không dấu hoặc kiểm tra lại tên bài thuốc.</span>
+            <span th:if="${type == 'vithuoc'}">Thử tìm không dấu hoặc tên khoa học.</span>
+        </div>
+
+        <nav class="pager" th:if="${page.totalPages > 1}" aria-label="Phân trang"
+            style="margin-top:24px;list-style:none;padding:0;display:flex;gap:6px;justify-content:center;">
+            <li th:if="${page.hasPrevious()}">
+                <a th:href="@{/search(type=${type},q=${q},page=${page.number - 1})}">‹</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a th:text="${i + 1}" th:href="@{/search(type=${type},q=${q},page=${i})}"></a>
+            </li>
+            <li th:if="${page.hasNext()}">
+                <a th:href="@{/search(type=${type},q=${q},page=${page.number + 1})}">›</a>
+            </li>
+        </nav>
+    </main>
+
+    <footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+
+</html>

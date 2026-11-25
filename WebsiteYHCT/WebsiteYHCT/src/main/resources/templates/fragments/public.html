@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' | Bản Thảo — Tra cứu bài thuốc YHCT'">Bản Thảo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<header th:fragment="header(active)" class="site-header">
+    <div class="container bar">
+        <a th:href="@{/}" class="brand">
+            <div class="logo">B</div>
+            <div>
+                <strong>Bản Thảo</strong>
+                <small>Tra cứu bài thuốc cổ truyền</small>
+            </div>
+        </a>
+        <nav aria-label="Điều hướng chính">
+            <a th:href="@{/}" th:classappend="${active == 'home'} ? 'active'">Tra cứu bài thuốc</a>
+            <a th:href="@{/vi-thuoc}" th:classappend="${active == 'vithuoc'} ? 'active'">Vị thuốc</a>
+            <a th:href="@{/nguon-du-lieu}" th:classappend="${active == 'nguon'} ? 'active'">Nguồn dữ liệu</a>
+            <a th:href="@{/ve-thu-vien}" th:classappend="${active == 'about'} ? 'active'">Về thư viện</a>
+            <a th:href="@{/admin}" class="btn-admin">Đăng nhập quản trị</a>
+        </nav>
+    </div>
+</header>
+
+<div th:fragment="disclaimer" class="notice" role="note">
+    Thông tin chỉ mang tính tham khảo học tập và nghiên cứu, không thay thế chẩn đoán và chỉ định của thầy thuốc.
+    Không tự ý dùng bài thuốc khi chưa có tư vấn chuyên môn.
+</div>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="container">
+        <div class="foot-grid">
+            <div>
+                <p class="foot-brand">Bản Thảo</p>
+                <p class="foot-sub">Lưu giữ tri thức · Không thay nguyên cứu</p>
+            </div>
+            <nav class="foot-nav" aria-label="Footer">
+                <a th:href="@{/}">Bài thuốc</a>
+                <a th:href="@{/vi-thuoc}">Vị thuốc</a>
+                <a th:href="@{/nguon-du-lieu}">Nguồn dữ liệu</a>
+                <a th:href="@{/ve-thu-vien}">Hướng dẫn tra cứu</a>
+            </nav>
+        </div>
+        <div class="foot-bottom">
+            <span>© 2026 Bản Thảo · Tra cứu y học cổ truyền</span>
+            <span>Bản thiết kế giao diện · Nội dung hỗ trợ minh họa</span>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

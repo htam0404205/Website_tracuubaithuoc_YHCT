@@ -1,0 +1,22 @@
+spring.application.name=WebsiteYHCT
+server.port=8081
+
+# --- SQL Server ---
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=YHCT;encrypt=false;trustServerCertificate=true
+spring.datasource.username=${DB_USER:sa}
+spring.datasource.password=${DB_PASS:123456}
+
+# --- JPA ---
+# Bảng do 01_schema_v3.sql tạo, Hibernate chỉ KIỂM TRA (không tạo/sửa)
+spring.jpa.hibernate.ddl-auto=validate
+# Giữ nguyên tên cột PascalCase (MaBaiThuoc...), thiếu dòng này sẽ lỗi "Invalid column name"
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.jpa.open-in-view=false
+spring.jpa.show-sql=false
+
+# --- Thymeleaf ---
+spring.thymeleaf.cache=false
+
+# --- Tài khoản quản trị đầu tiên (code đọc các dòng này sẽ viết ở cột mốc 3) ---
+app.admin.username=${ADMIN_USER:admin}
+app.admin.password=${ADMIN_PASS:admin123}

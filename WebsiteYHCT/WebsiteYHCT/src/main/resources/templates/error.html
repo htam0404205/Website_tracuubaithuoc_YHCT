@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public :: head('Không tìm thấy')}"></head>
+<body>
+<header th:replace="~{fragments/public :: header('')}"></header>
+<main class="container page">
+    <div class="prose">
+        <p class="eyebrow" th:text="'Lỗi ' + ${status}">Lỗi 404</p>
+        <h1 th:text="${status == 404} ? 'Không tìm thấy nội dung này' : 'Có lỗi xảy ra'">Không tìm thấy nội dung này</h1>
+        <p class="lead">Trang hoặc bản ghi bạn tìm không tồn tại, hoặc đã bị xóa.</p>
+        <a th:href="@{/}" class="btn btn-primary">Về trang chủ</a>
+    </div>
+</main>
+<footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public :: head('Danh mục vị thuốc')}"></head>
+<body>
+<header th:replace="~{fragments/public :: header('vithuoc')}"></header>
+
+<div class="search-hero">
+    <div class="container">
+        <h1 class="serif">Danh mục vị thuốc</h1>
+        <p class="hero-sub" style="margin: 0 auto 20px; color: var(--cream); font-size: 0.95rem; max-width: 580px;">
+            Tra cứu chuẩn hóa danh mục vị thuốc y học cổ truyền, tên khoa học và nguồn gốc dược liệu.
+        </p>
+        <form class="search-box" th:action="@{/vi-thuoc}" method="get" role="search" style="max-width:640px; margin: 0 auto;">
+            <input type="text" name="q" th:value="${q}" placeholder="Tìm theo tên vị thuốc hoặc tên khoa học..." aria-label="Từ khóa tìm kiếm">
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </form>
+    </div>
+</div>
+
+<main class="container page">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <p class="result-count" style="margin:0;">
+            <strong th:text="${page.totalElements}">0</strong> vị thuốc
+            <span th:if="${q != null and !#strings.isEmpty(q)}">phù hợp với từ khóa "<strong th:text="${q}"></strong>"</span>
+        </p>
+        <a th:if="${q != null and !#strings.isEmpty(q)}" th:href="@{/vi-thuoc}" class="btn btn-ghost" style="font-size:0.82rem; padding: 4px 10px;">Đặt lại bộ lọc</a>
+    </div>
+
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+        <article class="card" th:each="vt : ${page.content}" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+                <div class="card-head">
+                    <span class="badge badge-ok" th:if="${vt.nguonGoc() != null and !#strings.isEmpty(vt.nguonGoc())}" th:text="${vt.nguonGoc()}">Nam dược</span>
+                    <span class="card-tag" th:if="${vt.maDuocLieu() != null}" th:text="${vt.maDuocLieu()}">DL-001</span>
+                </div>
+                <h3 style="margin: 8px 0 4px;">
+                    <a th:href="@{/vi-thuoc/{id}(id=${vt.id()})}" th:text="${vt.tenViThuoc()}" style="color:var(--text); text-decoration:none;">Bạch truật</a>
+                </h3>
+                <p class="card-desc" style="font-style:italic; font-size:0.84rem; color:var(--muted); margin-bottom: 12px;"
+                   th:text="${vt.tenKhoaHoc() != null ? vt.tenKhoaHoc() : 'Chưa có tên khoa học'}">Atractylodes macrocephala</p>
+            </div>
+            <div>
+                <a th:href="@{/vi-thuoc/{id}(id=${vt.id()})}" class="card-link" style="display:inline-flex; align-items:center; gap:4px; font-size:0.85rem; font-weight:600; color:var(--green); text-decoration:none;">
+                    Xem chi tiết <span>↗</span>
+                </a>
+            </div>
+        </article>
+    </div>
+
+    <div class="empty" th:if="${page.totalElements == 0}" style="margin-top: 30px;">
+        Không tìm thấy vị thuốc nào phù hợp với từ khóa đã nhập.
+    </div>
+
+    <!-- Phân trang -->
+    <nav class="pager" th:if="${page.totalPages > 1}" aria-label="Phân trang" style="margin-top:32px; list-style:none; padding:0; display:flex; gap:6px; justify-content:center;">
+        <li th:if="${page.hasPrevious()}">
+            <a th:href="@{/vi-thuoc(q=${q},page=${page.number - 1})}">‹</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(trangBd, trangKt)}" th:classappend="${i == page.number} ? 'active'">
+            <a th:text="${i + 1}" th:href="@{/vi-thuoc(q=${q},page=${i})}"></a>
+        </li>
+        <li th:if="${page.hasNext()}">
+            <a th:href="@{/vi-thuoc(q=${q},page=${page.number + 1})}">›</a>
+        </li>
+    </nav>
+</main>
+
+<footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+</html>

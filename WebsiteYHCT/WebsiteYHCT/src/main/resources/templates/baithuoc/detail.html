@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public :: head(${baiThuoc.tenBaiThuoc})}"></head>
+<body>
+<header th:replace="~{fragments/public :: header('baithuoc')}"></header>
+
+<main class="container page">
+    <nav class="breadcrumb" aria-label="Đường dẫn">
+        <a th:href="@{/}">Trang chủ</a> / <a th:href="@{/search(type='baithuoc')}">Bài thuốc</a> /
+        <span th:text="${baiThuoc.tenBaiThuoc}">Tên bài thuốc</span>
+    </nav>
+
+    <div class="detail-head">
+        <h1 th:text="${baiThuoc.tenBaiThuoc}">Tên bài thuốc</h1>
+        <div class="meta">
+            <a class="badge" th:if="${baiThuoc.tenBenhDanh != null}"
+               th:href="@{/search(type='baithuoc',benhDanh=${baiThuoc.maBenhDanh})}" th:text="${baiThuoc.tenBenhDanh}">Bệnh danh</a>
+            <span class="badge badge-warn" th:if="${baiThuoc.tenTheLamSang != null}" th:text="${baiThuoc.tenTheLamSang}">Thể lâm sàng</span>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div>
+            <section class="section">
+                <h2>Thành phần</h2>
+                <ol class="ingredients" th:if="${!#lists.isEmpty(thanhPhanList)}">
+                    <li th:each="tp : ${thanhPhanList}">
+                        <span>
+                            <a th:if="${tp.viThuoc != null}" th:href="@{/vi-thuoc/{id}(id=${tp.viThuoc.maDungChung})}" th:text="${tp.tenGoc}">Can khương</a>
+                            <span th:unless="${tp.viThuoc != null}" th:text="${tp.tenGoc}">Sinh khương</span>
+                            <small th:if="${tp.viThuoc != null and tp.tenGoc != tp.viThuoc.tenViThuoc}"
+                                   th:text="'(khớp với vị thuốc ' + ${tp.viThuoc.tenViThuoc} + ')'"></small>
+                            <span class="badge badge-warn" th:if="${tp.viThuoc == null}">Chưa khớp danh mục</span>
+                        </span>
+                    </li>
+                </ol>
+                <p th:if="${#lists.isEmpty(thanhPhanList)}">Văn bản gốc không liệt kê thành phần cụ thể cho bài thuốc này.</p>
+            </section>
+
+            <section class="section">
+                <h2>Phân loại theo văn bản</h2>
+                <dl class="facts">
+                    <dt>Bệnh danh YHCT</dt>
+                    <dd th:text="${baiThuoc.tenBenhDanh} ?: 'Không có dữ liệu'">Bệnh danh</dd>
+                    <dt>Thể lâm sàng</dt>
+                    <dd th:text="${baiThuoc.tenTheLamSang} ?: 'Không có dữ liệu'">Thể lâm sàng</dd>
+                    <dt>Mã bài thuốc</dt>
+                    <dd th:text="${baiThuoc.maBaiThuoc}">U62.392.5.01.ĐP001</dd>
+                </dl>
+            </section>
+
+            <div th:replace="~{fragments/public :: disclaimer}"></div>
+        </div>
+
+        <aside class="aside-box" aria-label="Nguồn dữ liệu" th:if="${baiThuoc.vanBan != null}">
+            <h3>Nguồn dữ liệu</h3>
+            <dl class="facts">
+                <dt>Văn bản</dt>
+                <dd th:text="${baiThuoc.soHieuVanBan}">Quyết định 3080/QĐ-BYT</dd>
+                <dt>Ngày ban hành</dt>
+                <dd th:text="${baiThuoc.ngayVanBan != null} ? ${#temporals.format(baiThuoc.ngayVanBan, 'dd/MM/yyyy')} : '—'">26/09/2025</dd>
+                <dt th:if="${baiThuoc.trangBatDau != null}">Vị trí trong văn bản</dt>
+                <dd th:if="${baiThuoc.trangBatDau != null}" th:text="'Trang ' + ${baiThuoc.trangBatDau} + (${baiThuoc.trangKetThuc != baiThuoc.trangBatDau} ? '–' + ${baiThuoc.trangKetThuc} : '')">Trang 1</dd>
+            </dl>
+            <p style="margin: 16px 0 0;" th:if="${baiThuoc.nguonUrl != null}">
+                <a class="btn btn-ghost" th:href="${baiThuoc.nguonUrl}" target="_blank" rel="noopener">Mở văn bản gốc (PDF)</a>
+            </p>
+        </aside>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+</html>

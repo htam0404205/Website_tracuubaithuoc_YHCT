@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public :: head('Về thư viện')}"></head>
+<body>
+<header th:replace="~{fragments/public :: header('about')}"></header>
+
+<main class="container page">
+    <div class="prose">
+        <h1 class="serif">Về thư viện Bản Thảo</h1>
+        <p class="lead" style="font-size: 1.1rem; color: var(--green); margin-bottom: 24px;">
+            Hệ thống tra cứu và chuẩn hóa tri thức y học cổ truyền Việt Nam.
+        </p>
+
+        <h2>1. Giới thiệu tổng quan</h2>
+        <p>
+            Thư viện <strong>Bản Thảo</strong> là một giải pháp số hóa dữ liệu y học cổ truyền, hướng đến việc xây dựng một nền tảng tra cứu chuẩn hóa, trực quan và tiện ích cho người học, thầy thuốc, giảng viên và các nhà nghiên cứu y học cổ truyền.
+        </p>
+        <p>
+            Hệ thống cung cấp công cụ liên kết đa chiều giữa các phương tễ cổ truyền (bài thuốc) với danh mục vị thuốc, đồng thời gắn kết với phân loại bệnh danh và thể lâm sàng tương ứng theo các quy chuẩn hiện hành của Bộ Y tế.
+        </p>
+
+        <h2>2. Mục tiêu và sứ mệnh</h2>
+        <ul>
+            <li><strong>Lưu giữ và bảo tồn:</strong> Giữ nguyên vẹn tính chính thống của các bài thuốc cổ phương, đối pháp lập phương và nghiệm phương từ các tài liệu chuẩn.</li>
+            <li><strong>Minh bạch và chuẩn hóa:</strong> Đối chiếu thành phần các bài thuốc với danh mục vị thuốc được chuẩn hóa mã và tên khoa học, bảo toàn tên gốc và hiển thị rõ ràng trạng thái đối chiếu.</li>
+            <li><strong>Hỗ trợ tra cứu nhanh:</strong> Cho phép tìm kiếm linh hoạt theo tên bài thuốc, vị thuốc thành phần, thể lâm sàng hoặc bệnh danh, hỗ trợ cả tìm kiếm có dấu và không dấu.</li>
+        </ul>
+
+        <h2>3. Hướng dẫn sử dụng</h2>
+        <p>
+            Bạn có thể dễ dàng sử dụng Bản Thảo qua các chức năng chính:
+        </p>
+        <ul>
+            <li><strong>Tra cứu bài thuốc:</strong> Tại trang chủ hoặc mục tìm kiếm, nhập tên bài thuốc, chọn bệnh danh hoặc thể lâm sàng để xem cấu trúc bài thuốc, bảng thành phần và tài liệu nguồn.</li>
+            <li><strong>Tra cứu vị thuốc:</strong> Tra cứu theo tên thông thường, tên dược liệu hoặc tên khoa học, xem chi tiết nguồn gốc (Nam dược, Bắc dược) và các bài thuốc có sử dụng vị thuốc này.</li>
+            <li><strong>Đối chiếu nguồn gốc:</strong> Mỗi bài thuốc đều hiển thị thông tin số hiệu văn bản, số trang và dòng nguồn giúp dễ dàng kiểm chứng lại tài liệu gốc.</li>
+        </ul>
+
+        <div th:replace="~{fragments/public :: disclaimer}"></div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+</html>

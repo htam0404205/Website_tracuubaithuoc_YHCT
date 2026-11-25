@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin :: head('Quản lý vị thuốc')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('vithuoc')}"></aside>
+
+    <main class="main">
+        <div class="admin-topbar-row">
+            <div class="breadcrumb">
+                <a th:href="@{/admin}" style="color:var(--muted);text-decoration:none;">Quản trị</a>
+                <span class="sep">›</span>
+                <span>Vị thuốc</span>
+            </div>
+            <div class="right-actions">
+                <div class="admin-user"><div class="avatar">QT</div><span style="font-size:.82rem;">Quản trị viên</span></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div th:replace="~{fragments/admin :: flash}"></div>
+
+            <div class="topbar">
+                <div>
+                    <h1 class="page-title serif">Quản lý vị thuốc</h1>
+                    <p class="page-subtitle">Chuẩn hóa danh mục vị thuốc và kiểm soát các liên kết thành phần.</p>
+                </div>
+                <a th:href="@{/admin/vi-thuoc/new}" class="btn btn-primary">+ Thêm vị thuốc</a>
+            </div>
+
+            <div class="notice notice-info" style="margin-bottom:16px;">
+                ⓘ Không thể xóa vị thuốc đang được sử dụng trong thành phần của một bài thuốc.
+            </div>
+
+            <div class="panel">
+                <div class="table-panel-head">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <h3>Tất cả vị thuốc</h3>
+                        <span class="table-count" th:text="${#numbers.formatInteger(page.totalElements,1,'POINT')}">442</span>
+                    </div>
+                    <span style="font-size:.76rem;color:var(--muted);">Bản ghi minh họa</span>
+                </div>
+
+                <form class="toolbar" th:action="@{/admin/vi-thuoc}" method="get" style="padding:12px 14px;border-bottom:1px solid var(--line);">
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên hoặc mã vị thuốc">
+                    <select name="nguonGoc">
+                        <option value="">Tất cả nguồn dữ liệu</option>
+                        <option value="nam"  th:selected="${nguonGoc == 'nam'}">Nam dược</option>
+                        <option value="bac"  th:selected="${nguonGoc == 'bac'}">Bắc dược</option>
+                    </select>
+                    <button type="submit" class="btn btn-ghost">Tìm</button>
+                    <a th:href="@{/admin/vi-thuoc}" class="btn btn-ghost">Đặt lại</a>
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:36px;"><input type="checkbox" disabled></th>
+                            <th>MÃ VỊ THUỐC</th>
+                            <th>TÊN VỊ THUỐC</th>
+                            <th>TÊN KHOA HỌC</th>
+                            <th>MÃ DƯỢC LIỆU</th>
+                            <th>BÀI THUỐC SỬ DỤNG</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="vt : ${page.content}">
+                            <td><input type="checkbox"></td>
+                            <td class="muted" style="font-size:.8rem;" th:text="${vt.maDuocLieu != null ? vt.maDuocLieu : '—'}">VT-001</td>
+                            <td><strong th:text="${vt.tenViThuoc}">Bạch truật</strong></td>
+                            <td><em class="muted" th:text="${vt.tenKhoaHocDuocLieu != null ? vt.tenKhoaHocDuocLieu : '—'}">Atractylodes macrocephala</em></td>
+                            <td class="muted" th:text="${vt.maDuocLieu != null ? vt.maDuocLieu : '—'}">DL-001</td>
+                            <td>
+                                <a th:href="@{/search(type='baithuoc',q=${vt.tenViThuoc})}" target="_blank"
+                                   style="font-size:.8rem;color:var(--green2);">Xem bài thuốc →</a>
+                            </td>
+                            <td>
+                                <div class="cell-actions">
+                                    <a class="icon-btn" th:href="@{/admin/vi-thuoc/{id}/edit(id=${vt.maDungChung})}" title="Chỉnh sửa">✏</a>
+                                    <form th:action="@{/admin/vi-thuoc/{id}/delete(id=${vt.maDungChung})}" method="post" style="margin:0;"
+                                          onsubmit="return confirm('Xóa vị thuốc này?');">
+                                        <button type="submit" class="icon-btn danger" title="Xóa">🗑</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${page.totalElements == 0}">
+                            <td colspan="7" class="muted" style="text-align:center;padding:28px;">Không có vị thuốc nào phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="table-footer" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span th:text="'Hiển thị ' + (${page.number * page.size + 1}) + '–' + ${page.number * page.size + page.numberOfElements} + ' trong ' + ${#numbers.formatInteger(page.totalElements,1,'POINT')} + ' vị thuốc'">Hiển thị 1–7</span>
+                    <nav th:if="${page.totalPages > 1}">
+                        <ul class="pager" style="margin:0;">
+                            <li th:if="${page.hasPrevious()}">
+                                <a th:href="@{/admin/vi-thuoc(keyword=${keyword},page=${page.number-1})}">‹</a>
+                            </li>
+                            <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                                th:classappend="${i == page.number} ? 'active'"
+                                th:if="${i == 0 or i == page.totalPages - 1 or (i >= page.number - 1 and i <= page.number + 1)}">
+                                <a th:text="${i + 1}" th:href="@{/admin/vi-thuoc(keyword=${keyword},page=${i})}"></a>
+                            </li>
+                            <li th:if="${page.hasNext()}">
+                                <a th:href="@{/admin/vi-thuoc(keyword=${keyword},page=${page.number+1})}">›</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <p style="font-size:.74rem;color:var(--muted);">Nội dung các bản ghi và mã định danh trên màn hình là dữ liệu minh họa thiết kế.</p>
+        </div>
+    </main>
+</div>
+</body>
+</html>

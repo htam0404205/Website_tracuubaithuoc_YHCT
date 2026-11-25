@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+
+<head th:replace="~{fragments/public :: head(${viThuoc.tenViThuoc})}"></head>
+
+<body>
+    <header th:replace="~{fragments/public :: header('vithuoc')}"></header>
+
+    <main>
+        <div class="crumb-bar">
+            <div class="container breadcrumb">
+                <a th:href="@{/}">Trang chủ</a>
+                <span class="sep">/</span>
+                <a th:href="@{/vi-thuoc}">Vị thuốc</a>
+                <span class="sep">/</span>
+                <span th:text="${viThuoc.tenViThuoc}">Tên vị thuốc</span>
+            </div>
+        </div>
+
+        <div class="detail-hero" style="padding:28px 0 32px;">
+            <div class="container detail-hero-grid">
+                <div>
+                    <h1 th:text="${viThuoc.tenViThuoc}">Tên vị thuốc</h1>
+                    <p class="lead" th:if="${viThuoc.tenKhoaHocDuocLieu != null}" style="font-style:italic;"
+                        th:text="${viThuoc.tenKhoaHocDuocLieu}">Tên khoa học</p>
+                    <div class="meta-line" style="margin-top:10px;">
+                        <span class="badge badge-ok" th:if="${viThuoc.nguonGocNam != null}">Nam dược</span>
+                        <span class="badge badge-muted" th:if="${viThuoc.nguonGocBac != null}">Bắc dược</span>
+                        <span class="muted" th:if="${viThuoc.maDuocLieu != null}"
+                            th:text="'Mã dược liệu: ' + ${viThuoc.maDuocLieu}"></span>
+                    </div>
+                </div>
+                <div class="hero-visual small" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <div class="container detail-grid">
+            <aside class="side">
+                <p class="side-title">TRONG TRANG NÀY</p>
+                <a href="#thong-tin" class="side-link"><span class="num">01</span> Thông tin dược liệu</a>
+                <a href="#bai-thuoc" class="side-link"><span class="num">02</span> Bài thuốc sử dụng</a>
+                <div class="side-note">
+                    <strong>Không tự ý dùng thuốc</strong>
+                    <p>Thông tin dành cho học tập và nghiên cứu. Tham khảo bác sĩ YHCT trước khi sử dụng.</p>
+                </div>
+            </aside>
+
+            <div>
+                <!-- 01 Thông tin dược liệu -->
+                <section id="thong-tin" class="d-section">
+                    <h2 class="serif"><span class="num">01</span> Thông tin dược liệu</h2>
+                    <div class="info-grid">
+                        <div>
+                            <small>TÊN KHOA HỌC DƯỢC LIỆU</small>
+                            <strong><em
+                                    th:text="${viThuoc.tenKhoaHocDuocLieu != null ? viThuoc.tenKhoaHocDuocLieu : 'Không có dữ liệu'}">Atractylodes
+                                    macrocephala</em></strong>
+                        </div>
+                        <div>
+                            <small>NGUỒN GỐC (LOÀI)</small>
+                            <strong><em
+                                    th:text="${viThuoc.tenKhoaHocNguon != null ? viThuoc.tenKhoaHocNguon : 'Không có dữ liệu'}">Atractylodes
+                                    macrocephala Koidz.</em></strong>
+                        </div>
+                    </div>
+                    <div class="info-grid" style="margin-top:12px;">
+                        <div>
+                            <small>MÃ DƯỢC LIỆU</small>
+                            <strong
+                                th:text="${viThuoc.maDuocLieu != null ? viThuoc.maDuocLieu : 'Không có dữ liệu'}">05V.302</strong>
+                        </div>
+                        <div>
+                            <small>NGUỒN GỐC DƯỢC LIỆU</small>
+                            <div style="margin-top:4px;">
+                                <span class="badge badge-ok" th:if="${viThuoc.nguonGocNam != null}">Nam dược</span>
+                                <span class="badge badge-muted" th:if="${viThuoc.nguonGocBac != null}">Bắc dược</span>
+                                <span class="muted"
+                                    th:if="${viThuoc.nguonGocNam == null and viThuoc.nguonGocBac == null}">Chưa phân
+                                    loại</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 02 Bài thuốc sử dụng -->
+                <section id="bai-thuoc" class="d-section">
+                    <h2 class="serif"><span class="num">02</span> Bài thuốc có dùng vị thuốc này</h2>
+                    <div th:if="${!#lists.isEmpty(baiThuocList)}">
+                        <article class="result" th:each="bt : ${baiThuocList}">
+                            <h3><a th:href="@{/bai-thuoc/{id}(id=${bt.id()})}" th:text="${bt.tenBaiThuoc()}">Tứ quân tử
+                                    thang</a></h3>
+                            <p class="meta">
+                                <span class="badge" th:text="${bt.benhDanh()}"></span>
+                                <span class="muted" th:text="${bt.theLamSang()}"></span>
+                            </p>
+                        </article>
+                    </div>
+                    <p class="empty" th:if="${#lists.isEmpty(baiThuocList)}">
+                        Chưa có bài thuốc nào trong hệ thống dùng vị thuốc này.
+                    </p>
+                </section>
+
+                <div th:replace="~{fragments/public :: disclaimer}"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+
+</html>

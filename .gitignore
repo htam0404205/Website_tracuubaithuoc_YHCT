@@ -1,0 +1,18 @@
+# IDE
+.idea/
+.vscode/
+
+# Java / Maven
+**/target/
+*.class
+
+# Configuration chứa thông tin riêng
+**/application.properties
+**/.env
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

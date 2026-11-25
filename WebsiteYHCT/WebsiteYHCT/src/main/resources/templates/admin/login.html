@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin :: head('Đăng nhập')}"></head>
+<body class="login-page">
+    <!-- Cột trái: branding -->
+    <div class="login-left">
+        <div>
+            <div class="brand" style="color:#aedbc0;text-decoration:none;display:flex;gap:10px;align-items:center;">
+                <div class="logo">B</div>
+                <div>
+                    <p class="brand-name">Bản Thảo</p>
+                    <p class="brand-sub">Nền tảng tri thức y học cổ truyền</p>
+                </div>
+            </div>
+            <h1>Gìn giữ tri thức.<br>Kết nối giá trị.</h1>
+            <p class="lead">Không gian quản trị dữ liệu bài thuốc và vị thuốc, được tổ chức tập trung, nhất quán và có nguồn gốc.</p>
+            <ul class="login-features">
+                <li>
+                    <div class="feat-icon">📖</div>
+                    <div>
+                        <strong style="display:block;color:#fff;font-size:.88rem;">Quản lý tri thức tập trung</strong>
+                        <span>Bài thuốc, vị thuốc và các mối liên kết.</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="feat-icon">🔗</div>
+                    <div>
+                        <strong style="display:block;color:#fff;font-size:.88rem;">Đối chiếu thành phần chính xác</strong>
+                        <span>Giữ nguyên tên gốc, minh bạch trạng thái.</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="feat-icon">📄</div>
+                    <div>
+                        <strong style="display:block;color:#fff;font-size:.88rem;">Truy vết đến tài liệu nguồn</strong>
+                        <span>Kiểm chứng thông tin trước mỗi cập nhật.</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="login-stats">
+            <div>
+                <strong th:text="${soBaiThuoc ?: '—'}">516</strong>
+                <span>Bài thuốc</span>
+            </div>
+            <div>
+                <strong th:text="${soViThuoc ?: '—'}">442</strong>
+                <span>Vị thuốc</span>
+            </div>
+            <div>
+                <strong th:text="${soThanhPhan ?: '—'}">2.564</strong>
+                <span>Thành phần</span>
+            </div>
+        </div>
+        <p style="font-size:.74rem;color:rgba(255,255,255,.4);">Dữ liệu phục vụ tra cứu, học tập và nghiên cứu.</p>
+    </div>
+
+    <!-- Cột phải: form đăng nhập -->
+    <div class="login-right">
+        <div class="login-card">
+            <span class="login-badge">Cổng quản trị</span>
+            <h2 class="serif">Chào mừng trở lại</h2>
+            <p>Đăng nhập để quản lý và cập nhật dữ liệu hệ thống.</p>
+
+            <div class="alert-error" th:if="${param.error}" role="alert">
+                Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại.
+            </div>
+
+            <form th:action="@{/admin/login}" method="post">
+                <div class="field required">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" required autofocus autocomplete="username"
+                           placeholder="Nhập tên đăng nhập">
+                </div>
+                <div class="field required">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password"
+                           placeholder="Nhập mật khẩu">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top:4px;">Đăng nhập →</button>
+            </form>
+
+            <div class="login-info">
+                <span>🛡</span>
+                <span>Chỉ dành cho tài khoản quản trị được cấp quyền. Cần hỗ trợ? Vui lòng liên hệ quản trị hệ thống.</span>
+            </div>
+
+            <a th:href="@{/}" class="login-back">← Về website tra cứu</a>
+            <p class="login-copyright">© Bản Thảo · Hệ thống tra cứu bài thuốc y học cổ truyền</p>
+        </div>
+    </div>
+</body>
+</html>

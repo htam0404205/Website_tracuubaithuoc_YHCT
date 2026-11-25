@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public :: head('Nguồn dữ liệu')}"></head>
+<body>
+<header th:replace="~{fragments/public :: header('nguon')}"></header>
+
+<main class="container page">
+    <div class="prose">
+        <h1 class="serif">Nguồn dữ liệu và giới hạn</h1>
+
+        <h2>Dữ liệu lấy từ đâu</h2>
+        <p>Danh sách bài thuốc, vị thuốc và liên kết giữa hai loại này được trích từ Quyết định số
+            <strong>3080/QĐ-BYT ngày 26/9/2025</strong> của Bộ Y tế, ban hành Danh mục mã dùng chung thuật ngữ y học cổ truyền (Đợt 2).
+            Văn bản được đăng trên cổng thông tin của Cục Quản lý Y, Dược cổ truyền (ydct.moh.gov.vn).
+            Mỗi bản ghi trên website đều kèm số trang và đường dẫn tới văn bản gốc.</p>
+
+        <h2>Cách hệ thống xử lý</h2>
+        <p>Dữ liệu được trích xuất từ tệp PDF, làm sạch và nạp vào cơ sở dữ liệu SQL Server. Thành phần của từng bài thuốc được đối chiếu với danh mục vị thuốc; những thành phần chưa khớp được đánh dấu "Chưa khớp danh mục" và được quản trị viên rà soát dần.</p>
+
+        <h2>Giới hạn cần biết</h2>
+        <ul>
+            <li>Đây là danh mục thuật ngữ chuẩn hóa, không phải sách hướng dẫn điều trị. Website không có liều lượng, cách dùng hay chống chỉ định.</li>
+            <li>Một số bài thuốc trong văn bản gốc không liệt kê thành phần cụ thể.</li>
+            <li>Quy mô dữ liệu giới hạn trong phạm vi văn bản nguồn.</li>
+        </ul>
+
+        <div th:replace="~{fragments/public :: disclaimer}"></div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/public :: footer}"></footer>
+</body>
+</html>

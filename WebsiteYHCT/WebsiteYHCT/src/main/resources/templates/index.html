@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public :: head('Tra cứu bài thuốc')}"></head>
+<body>
+<header th:replace="~{fragments/public :: header('home')}"></header>
+
+<main>
+    <!-- ══ HERO ══ -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div>
+                <p class="eyebrow">Tri thức xưa · Kết nối hôm nay</p>
+                <h1>Kho tàng bài thuốc,<br>trong tầm tay bạn.</h1>
+                <p class="lead">Khám phá, tra cứu và đối chiếu bài thuốc y học cổ truyền theo tên, thành phần, bệnh danh và thể lâm sàng.</p>
+
+                <div class="tabs" role="tablist">
+                    <button type="button" class="tab active"
+                            th:attr="data-action=@{/},data-anchor='kham-pha'"
+                            data-name="q" data-ph="Nhập tên bài thuốc...">Bài thuốc</button>
+                    <button type="button" class="tab"
+                            th:attr="data-action=@{/vi-thuoc}"
+                            data-name="q" data-ph="Nhập tên vị thuốc...">Vị thuốc</button>
+                    <button type="button" class="tab"
+                            th:attr="data-action=@{/},data-anchor='kham-pha'"
+                            data-name="thanhPhan" data-ph="Nhập tên vị thuốc trong thành phần...">Theo thành phần</button>
+                </div>
+
+                <form id="hero-form" class="search-box" th:action="@{/}" method="get" role="search">
+                    <input id="hero-q" type="text" name="q" placeholder="Nhập tên bài thuốc..." aria-label="Từ khóa tìm kiếm">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                </form>
+                <p class="try">Thử tìm:
+                    <a th:href="@{/(q='Tứ quân tử thang')}">Tứ quân tử thang</a> ·
+                    <a th:href="@{/(thanhPhan='Cam thảo')}">Cam thảo</a> ·
+                    <a th:href="@{/(q='Bát trân thang')}">Bát trân thang</a></p>
+            </div>
+            <div class="hero-visual" aria-hidden="true"></div>
+        </div>
+    </section>
+
+    <!-- ══ STATS STRIP ══ -->
+    <section class="stats-strip">
+        <div class="container stats">
+            <div>
+                <strong th:text="${#numbers.formatInteger(soBaiThuoc, 1, 'POINT')}">0</strong>
+                <span>bài thuốc</span>
+            </div>
+            <div>
+                <strong th:text="${#numbers.formatInteger(soViThuoc, 1, 'POINT')}">0</strong>
+                <span>vị thuốc</span>
+            </div>
+            <div>
+                <strong th:text="${#numbers.formatInteger(soThanhPhan, 1, 'POINT')}">0</strong>
+                <span>dòng thành phần</span>
+            </div>
+            <div class="stats-note">
+                <strong>Một nơi tra cứu, nhiều chiều kết nối</strong>
+                <span>Quy tắc rõ ràng: tên gốc luôn được giữ nguyên.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ KHÁM PHÁ BÀI THUỐC ══ -->
+    <section id="kham-pha" class="container page-section">
+        <div class="section-head">
+            <div>
+                <h2 class="serif">Khám phá bài thuốc</h2>
+                <p class="muted">Tra cứu có hệ thống, đối chiếu thông tin theo nguồn gốc.</p>
+            </div>
+            <span class="pill" th:text="${#numbers.formatInteger(trang.totalElements, 1, 'POINT')} + ' bài thuốc'">0 bài thuốc</span>
+        </div>
+
+        <div class="explore">
+            <!-- Bộ lọc bên trái -->
+            <aside class="filter-card">
+                <h3 class="serif">Bộ lọc tra cứu</h3>
+                <form th:action="@{/}" method="get">
+                    <input type="hidden" name="q"    th:value="${q}">
+                    <input type="hidden" name="sort" th:value="${sort}">
+
+                    <label for="benhDanh">Bệnh danh YHCT</label>
+                    <select name="benhDanh" id="benhDanh">
+                        <option value="">Tất cả bệnh danh</option>
+                        <option th:each="b : ${dsBenhDanh}" th:value="${b.ma()}" th:text="${b.ten()}"
+                                th:selected="${b.ma() == benhDanh}"></option>
+                    </select>
+
+                    <label for="theLamSang">Thể lâm sàng</label>
+                    <select name="theLamSang" id="theLamSang">
+                        <option value="">Tất cả thể lâm sàng</option>
+                        <option th:each="t : ${dsTheLamSang}" th:value="${t.ma()}" th:text="${t.ten()}"
+                                th:attr="data-benh=${t.cha()}" th:selected="${t.ma() == theLamSang}"></option>
+                    </select>
+
+                    <label for="thanhPhan">Vị thuốc thành phần</label>
+                    <input type="text" id="thanhPhan" name="thanhPhan" th:value="${thanhPhan}" placeholder="Nhập tên vị thuốc...">
+
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">Áp dụng bộ lọc</button>
+                    <a class="reset" th:href="@{/} + '#kham-pha'">Xóa bộ lọc</a>
+                </form>
+                <div class="hint-box">
+                    <strong>Tra cứu chính xác hơn</strong>
+                    <p>Kết hợp bệnh danh, thể lâm sàng và vị thuốc để thu hẹp kết quả. Tên thành phần luôn giữ đúng như văn bản gốc.</p>
+                </div>
+            </aside>
+
+            <!-- Kết quả bên phải -->
+            <div>
+                <form class="sort-bar" th:action="@{/}" method="get">
+                    <input type="hidden" name="q"         th:value="${q}">
+                    <input type="hidden" name="benhDanh"  th:value="${benhDanh}">
+                    <input type="hidden" name="theLamSang" th:value="${theLamSang}">
+                    <input type="hidden" name="thanhPhan" th:value="${thanhPhan}">
+                    <label for="sort">Sắp xếp:</label>
+                    <select name="sort" id="sort" onchange="this.form.submit()">
+                        <option value="ten"      th:selected="${sort == 'ten'}">Tên A–Z</option>
+                        <option value="ten-giam" th:selected="${sort == 'ten-giam'}">Tên Z–A</option>
+                        <option value="ma"       th:selected="${sort == 'ma'}">Mã bài thuốc</option>
+                    </select>
+                </form>
+
+                <div class="cards" th:if="${!trang.empty}">
+                    <article class="card-b" th:each="b : ${trang.content}">
+                        <div class="card-top">
+                            <span th:text="${#numbers.formatInteger(b.soViThuoc(), 2)} + ' vị thuốc'">04 vị thuốc</span>
+                            <span class="tag" th:text="${b.loai()}">Bài thuốc cổ phương</span>
+                        </div>
+                        <h3 class="serif"><a th:href="@{/bai-thuoc/{id}(id=${b.id()})}" th:text="${b.tenBaiThuoc()}"></a></h3>
+                        <p class="preview" th:text="${b.xemTruoc()}"></p>
+                        <p class="meta"    th:text="${b.theLamSang()} + ' · ' + ${b.benhDanh()}"></p>
+                        <a class="more"    th:href="@{/bai-thuoc/{id}(id=${b.id()})}">Xem chi tiết ↗</a>
+                    </article>
+                </div>
+
+                <p class="empty" th:if="${trang.empty}">
+                    Không tìm thấy bài thuốc phù hợp. Hãy thử bỏ bớt điều kiện lọc hoặc kiểm tra lại từ khóa.
+                </p>
+
+                <ul class="pager" th:if="${trang.totalPages > 1}">
+                    <li th:if="${trang.hasPrevious()}">
+                        <a th:href="@{/(q=${q},benhDanh=${benhDanh},theLamSang=${theLamSang},thanhPhan=${thanhPhan},sort=${sort},page=${trang.number - 1})} + '#kham-pha'">‹</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(trangBd, trangKt)}"
+                        th:classappend="${i == trang.number} ? 'active'">
+                        <a th:text="${i + 1}"
+                           th:href="@{/(q=${q},benhDanh=${benhDanh},theLamSang=${theLamSang},thanhPhan=${thanhPhan},sort=${sort},page=${i})} + '#kham-pha'"></a>
+                    </li>
+                    <li th:if="${trang.hasNext()}">
+                        <a th:href="@{/(q=${q},benhDanh=${benhDanh},theLamSang=${theLamSang},thanhPhan=${thanhPhan},sort=${sort},page=${trang.number + 1})} + '#kham-pha'">›</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ NOTICE ══ -->
+    <section class="container page-section" style="padding-top:0;">
+        <div class="notice-card">
+            <h3 class="serif">Tra cứu để hiểu, không thay để điều trị.</h3>
+            <p>Thông tin chỉ phục vụ học tập và nghiên cứu, không thay thế chẩn đoán, chỉ định hay tư vấn của thầy thuốc. Không tự ý sử dụng bất kỳ bài thuốc nào.</p>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/public :: footer}"></footer>
+
+<script>
+const form  = document.getElementById('hero-form');
+const input = document.getElementById('hero-q');
+document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const anchor = tab.dataset.anchor ? '#' + tab.dataset.anchor : '';
+    form.action = tab.dataset.action + anchor;
+    input.name  = tab.dataset.name;
+    input.placeholder = tab.dataset.ph;
+    input.focus();
+}));
+
+// Lọc thể lâm sàng theo bệnh danh
+const benh  = document.getElementById('benhDanh');
+const the   = document.getElementById('theLamSang');
+const tatCa = Array.from(the.options).map(o => ({v: o.value, t: o.text, b: o.dataset.benh || '', s: o.selected}));
+function locThe(giuLuaChon) {
+    const b = benh.value;
+    the.innerHTML = '';
+    tatCa.filter(o => !o.v || !b || o.b === b).forEach(o => {
+        const op = new Option(o.t, o.v);
+        op.dataset.benh = o.b;
+        op.selected = giuLuaChon && o.s;
+        the.add(op);
+    });
+}
+benh.addEventListener('change', () => locThe(false));
+locThe(true);
+</script>
+</body>
+</html>
